@@ -1,36 +1,34 @@
-# $Id: PKGBUILD 38886 2009-05-10 17:27:05Z giovanni $
-# Contributor: Jeff 'codemac' Mickey <jeff@archlinux.org>
-# Maintainer: Thayer Williams <thayer@archlinux.org>
-
-pkgname=dmenu
+pkgname=dmenu-xft
 pkgver=4.0
 pkgrel=1
-pkgdesc="Dynamic X menu"
-url="http://www.suckless.org/programs/dmenu.html"
+pkgdesc="Dynamic X menu - with xft support"
 arch=('i686' 'x86_64')
+url="http://code.suckless.org/"
 license=('MIT')
-depends=('libx11' 'libxinerama')
-makedepends=('xineramaproto')
-source=(http://code.suckless.org/dl/tools/$pkgname-$pkgver.tar.gz 
-		dmenu.patch
-		tab-space.patch
-		ctrl-c.patch)
+depends=('libx11' 'libxinerama' 'libxft')
+conflicts=('dmenu')
+provides=('dmenu')
+source=(http://code.suckless.org/dl/tools/dmenu-$pkgver.tar.gz
+        http://z.ip.fi/~henkka/dmenu-xft/dmenu-4.0-xft.diff
+	xftcolor-fix.patch
+	ctrl-c.patch
+	tab-space.patch)
+
 md5sums=('66e761a653930cc8a21614ba9fedf903'
-         'd74a6665a19cb0403720f1f3abcd280d'
-         '581adbb9af99b770b2c196c3cde25deb'
-         'db2156be1137153b50b36ee3b08d41ab')
+         '1f3ecd819a39dea88a3dde9b5271bec6'
+         '1c1648ea38f734591b4e31928bbe6ec1'
+         'db2156be1137153b50b36ee3b08d41ab'
+         '581adbb9af99b770b2c196c3cde25deb')
 
-build()
-{
-  cd $srcdir/$pkgname-$pkgver
-  patch -p1 < $srcdir/tab-space.patch || return 1
-  patch -p1 < $srcdir/dmenu.patch || return 1
-  patch -p1 < $srcdir/ctrl-c.patch || return 1
-  make || return 1
-  make DESTDIR=$pkgdir install || return 1
-
-  #install license
-  mkdir -p $pkgdir/usr/share/licenses/$pkgname
-  cp LICENSE $pkgdir/usr/share/licenses/$pkgname/
+build() {
+	cd $srcdir/dmenu-$pkgver
+	patch -p1 < ../tab-space.patch || return 1
+	patch -p1 < ../ctrl-c.patch || return 1
+	patch -p1 < ../dmenu-4.0-xft.diff || return 1
+	patch -p1 < ../xftcolor-fix.patch || return 1
+	make || return 1
+	make DESTDIR=$startdir/pkg PREFIX=/usr install || return 1
+    # LICENSE
+	mkdir -p $startdir/pkg/usr/share/licenses/$pkgname || return 1
+	cp LICENSE $startdir/pkg/usr/share/licenses/$pkgname/ || return 1
 }
-

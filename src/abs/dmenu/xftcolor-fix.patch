@@ -1,0 +1,164 @@
+--- dmenu-4.0.orig/dmenu.c	2010-03-29 11:42:44.000000000 -0400
++++ dmenu-4.0/dmenu.c	2010-03-29 11:42:29.000000000 -0400
+@@ -34,16 +34,17 @@
+ 		XFontStruct *xfont;
+ 		XFontSet set;
+ 		int ascent;
+ 		int descent;
+ 		int height;
+ 	} font;
+ 	XftDraw *xftdraw;
+ 	XftColor xftcolor;
++	XftColor xftselcolor;
+ 	XGlyphInfo gi;
+ 	struct {
+ 		XftFont *xft_font;
+ 		int ascent;
+ 		int descent;
+ 		int height;
+ 	} xftfont;
+ } DC; /* draw context */
+@@ -56,17 +57,17 @@
+ };
+ 
+ /* forward declarations */
+ static void appenditem(Item *i, Item **list, Item **last);
+ static void calcoffsets(void);
+ static char *cistrstr(const char *s, const char *sub);
+ static void cleanup(void);
+ static void drawmenu(void);
+-static void drawtext(const char *text, unsigned long col[ColLast]);
++static void drawtext(const char *text, unsigned long col[ColLast], XftColor *xftcolor);
+ static void eprint(const char *errstr, ...);
+ static unsigned long getcolor(const char *colstr);
+ static Bool grabkeyboard(void);
+ static void initfont(const char *fontstr);
+ static void kpress(XKeyEvent * e);
+ static void match(char *pattern);
+ static void readstdin(void);
+ static void run(void);
+@@ -167,16 +168,17 @@
+ 	while(allitems) {
+ 		itm = allitems->next;
+ 		free(allitems->text);
+ 		free(allitems);
+ 		allitems = itm;
+ 	}
+ 	if(fontxft) {
+ 		XftColorFree (dpy, DefaultVisual(dpy, screen), DefaultColormap(dpy, screen), &dc.xftcolor);
++		XftColorFree (dpy, DefaultVisual(dpy, screen), DefaultColormap(dpy, screen), &dc.xftselcolor);
+ 		XftFontClose (dpy, dc.xftfont.xft_font);
+ 		XftDrawDestroy(dc.xftdraw);
+ 	}
+ 	if(dc.font.set)
+ 		XFreeFontSet(dpy, dc.font.set);
+ 	else if(!fontxft)
+ 		XFreeFont(dpy, dc.font.xfont);
+ 	XFreePixmap(dpy, dc.drawable);
+@@ -188,79 +190,79 @@
+ void
+ drawmenu(void) {
+ 	Item *i;
+ 
+ 	dc.x = 0;
+ 	dc.y = 0;
+ 	dc.w = mw;
+ 	dc.h = mh;
+-	drawtext(NULL, dc.norm);
++	drawtext(NULL, dc.norm, &dc.xftcolor);
+ 	/* print prompt? */
+ 	if(promptw) {
+ 		dc.w = promptw;
+-		drawtext(prompt, dc.sel);
++		drawtext(prompt, dc.sel, &dc.xftselcolor);
+ 	}
+ 	dc.x += promptw;
+ 	dc.w = mw - promptw;
+ 	/* print command */
+ 	if(cmdw && item)
+ 		dc.w = cmdw;
+-	drawtext(text[0] ? text : NULL, dc.norm);
++	drawtext(text[0] ? text : NULL, dc.norm, &dc.xftcolor);
+ 	dc.x += cmdw;
+ 	if(curr) {
+ 		dc.w = spaceitem;
+-		drawtext((curr && curr->left) ? "<" : NULL, dc.norm);
++		drawtext((curr && curr->left) ? "<" : NULL, dc.norm, &dc.xftcolor);
+ 		dc.x += dc.w;
+ 		/* determine maximum items */
+ 		for(i = curr; i != next; i=i->right) {
+ 			dc.w = textw(i->text);
+ 			if(dc.w > mw / 3)
+ 				dc.w = mw / 3;
+-			drawtext(i->text, (sel == i) ? dc.sel : dc.norm);
++			drawtext(i->text, (sel == i) ? dc.sel : dc.norm, (sel == i) ? &dc.xftselcolor : &dc.xftcolor);
+ 			dc.x += dc.w;
+ 		}
+ 		dc.x = mw - spaceitem;
+ 		dc.w = spaceitem;
+-		drawtext(next ? ">" : NULL, dc.norm);
++		drawtext(next ? ">" : NULL, dc.norm, &dc.xftcolor);
+ 	}
+ 	XCopyArea(dpy, dc.drawable, win, dc.gc, 0, 0, mw, mh, 0, 0);
+ 	XFlush(dpy);
+ }
+ 
+ void
+-drawtext(const char *text, unsigned long col[ColLast]) {
++drawtext(const char *text, unsigned long col[ColLast], XftColor *xftcolor) {
+ 	char buf[256];
+ 	int i, x, y, h, len, olen;
+ 	XRectangle r = { dc.x, dc.y, dc.w, dc.h };
+ 
+ 	XSetForeground(dpy, dc.gc, col[ColBG]);
+ 	XFillRectangles(dpy, dc.drawable, dc.gc, &r, 1);
+ 	if(!text)
+ 		return;
+ 	olen = strlen(text);
+ 	h = dc.font.ascent + dc.font.descent;
+ 	y = dc.y + (dc.h / 2) - (h / 2) + dc.font.ascent;
+ 	if(dc.xftfont.xft_font) {	
+ 		h = dc.xftfont.ascent + dc.xftfont.descent;
+ 		y = dc.y + (dc.h / 2) - (h / 2) + dc.xftfont.ascent;
+ 	}
+     x = dc.x + (h / 2);
+ 	/* shorten text if necessary */
+ 	for(len = MIN(olen, sizeof buf); len && textnw(text, len) > dc.w - h; len--);
+ 	if(!len)
+ 		return;
+ 	memcpy(buf, text, len);
+ 	if(len < olen)
+ 		for(i = len; i && i > len - 3; buf[--i] = '.');
+ 	XSetForeground(dpy, dc.gc, col[ColFG]);
+ 	if(fontxft) {
+ 		if (!dc.xftdraw)
+ 			eprint("error, creating xft drawable failed");
+-		XftDrawString8(dc.xftdraw, &dc.xftcolor, dc.xftfont.xft_font, x, y, (unsigned char*)buf, len);
++		XftDrawString8(dc.xftdraw, xftcolor, dc.xftfont.xft_font, x, y, (unsigned char*)buf, len);
+ 	} else if(dc.font.set)
+ 		XmbDrawString(dpy, dc.drawable, dc.font.set, dc.gc, x, y, buf, len);
+ 	else
+ 		XDrawString(dpy, dc.drawable, dc.gc, x, y, buf, len);
+ }
+ 
+ void
+ eprint(const char *errstr, ...) {
+@@ -618,16 +620,18 @@
+ 	/* style */
+ 	dc.norm[ColBG] = getcolor(normbgcolor);
+ 	dc.norm[ColFG] = getcolor(normfgcolor);
+ 	dc.sel[ColBG] = getcolor(selbgcolor);
+ 	dc.sel[ColFG] = getcolor(selfgcolor);
+ 	if(fontxft){
+ 		if(!XftColorAllocName(dpy, DefaultVisual(dpy, screen), DefaultColormap(dpy, screen), (const char*)normfgcolor, &dc.xftcolor))
+ 			eprint("error, cannot allocate xft font color '%s'\n", normfgcolor);
++		if(!XftColorAllocName(dpy, DefaultVisual(dpy, screen), DefaultColormap(dpy, screen), (const char*)selfgcolor, &dc.xftselcolor))
++			eprint("error, cannot allocate xft font color '%s'\n", selfgcolor);
+         else
+ 			initxft();
+ 	} else initfont(font);
+ 
+ 	/* menu window */
+ 	wa.override_redirect = True;
+ 	wa.background_pixmap = ParentRelative;
+ 	wa.event_mask = ExposureMask | ButtonPressMask | KeyPressMask;
