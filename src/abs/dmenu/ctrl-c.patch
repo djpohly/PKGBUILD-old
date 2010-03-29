@@ -1,0 +1,21 @@
+--- dmenu-4.0.orig/dmenu.c	2010-03-05 14:08:18.000000000 -0500
++++ dmenu-4.0/dmenu.c	2010-03-28 13:59:26.000000000 -0400
+@@ -328,16 +328,18 @@
+ 	   || IsMiscFunctionKey(ksym) || IsPFKey(ksym)
+ 	   || IsPrivateKeypadKey(ksym))
+ 		return;
+ 	/* first check if a control mask is omitted */
+ 	if(e->state & ControlMask) {
+ 		switch (ksym) {
+ 		default:	/* ignore other control sequences */
+ 			return;
++		case XK_c:
++		case XK_C:
+ 		case XK_bracketleft:
+ 			ksym = XK_Escape;
+ 			break;
+ 		case XK_h:
+ 		case XK_H:
+ 			ksym = XK_BackSpace;
+ 			break;
+ 		case XK_i:
