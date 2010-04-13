@@ -10,15 +10,17 @@ conflicts=('dmenu')
 provides=('dmenu=4.0')
 source=(http://code.suckless.org/dl/tools/dmenu-$pkgver.tar.gz
         http://z.ip.fi/~henkka/dmenu-xft/dmenu-4.0-xft.diff
-	xftcolor-fix.patch
-	ctrl-c.patch
-	tab-space.patch)
+        xftcolor-fix.patch
+        ctrl-c.patch
+        tab-space.patch
+        textmargin.patch)
 
 md5sums=('66e761a653930cc8a21614ba9fedf903'
          '1f3ecd819a39dea88a3dde9b5271bec6'
          '1c1648ea38f734591b4e31928bbe6ec1'
          'db2156be1137153b50b36ee3b08d41ab'
-         '581adbb9af99b770b2c196c3cde25deb')
+         '581adbb9af99b770b2c196c3cde25deb'
+         'fde35c75d397ed68c9669f938daeb3e5')
 
 build() {
 	cd $srcdir/dmenu-$pkgver
@@ -26,6 +28,7 @@ build() {
 	patch -p1 < ../ctrl-c.patch || return 1
 	patch -p1 < ../dmenu-4.0-xft.diff || return 1
 	patch -p1 < ../xftcolor-fix.patch || return 1
+	patch -p1 < ../textmargin.patch || return 1
 	make || return 1
 	make DESTDIR=$startdir/pkg PREFIX=/usr install || return 1
     # LICENSE
