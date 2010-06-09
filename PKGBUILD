@@ -56,4 +56,4 @@ build() {
 
 }
 md5sums=('a0e65c3b9eb71a3bddb32a255a946b0c'
-         '3181cc6558730d7250bf5af3e0e48e88')
+         'adf12c46eea1914b8dec1737aaf54e25')
