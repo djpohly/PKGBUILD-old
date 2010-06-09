@@ -1,0 +1,59 @@
+Index: dzen.h
+===================================================================
+--- dzen.h	(revision 267)
++++ dzen.h	(working copy)
+@@ -62,6 +62,7 @@
+ 
+ /* clickable areas */
+ typedef struct _CLICK_A {
++	int active;
+ 	int button;
+ 	int start_x;
+ 	int end_x;
+Index: draw.c
+===================================================================
+--- draw.c	(revision 267)
++++ draw.c	(working copy)
+@@ -739,12 +739,17 @@
+ 										sens_areas[sens_areas_cnt].start_y = py;
+ 										sens_areas[sens_areas_cnt].end_y = py;
+ 										max_y = py;
++										sens_areas_cnt++;
+ 									}
+ 								} else {
+-									if(sens_areas_cnt < MAX_CLICKABLE_AREAS) {
+-										sens_areas[sens_areas_cnt].end_x = px;
+-										sens_areas[sens_areas_cnt].end_y = max_y;
+-										sens_areas_cnt++;
++									/* find most recent unclosed area */
++									for(i = sens_areas_cnt - 1; i >= 0; i--)
++										if(!sens_areas[i].active)
++											break;
++									if(i >= 0 && i < MAX_CLICKABLE_AREAS) {
++										sens_areas[i].end_x = px;
++										sens_areas[i].end_y = max_y;
++										sens_areas[i].active = 1;
+ 									}
+ 								}
+ 							}
+Index: main.c
+===================================================================
+--- main.c	(revision 267)
++++ main.c	(working copy)
+@@ -702,13 +702,14 @@
+ 			}
+ 
+ 			/* clickable areas */
+-			for(i=0; i<sens_areas_cnt; i++) {
++			for(i=sens_areas_cnt; i>=0; i--) {
+ 				if(ev.xbutton.window == dzen.title_win.win &&
+ 						ev.xbutton.button == sens_areas[i].button &&
+ 						(ev.xbutton.x >=  sens_areas[i].start_x+xorig &&
+ 						ev.xbutton.x <=  sens_areas[i].end_x+xorig) &&
+ 						(ev.xbutton.y >=  sens_areas[i].start_y &&
+-						ev.xbutton.y <=  sens_areas[i].end_y)) {
++						ev.xbutton.y <=  sens_areas[i].end_y) &&
++						sens_areas[i].active) {
+ 					spawn(sens_areas[i].cmd);
+ 					sa_clicked++;
+ 					break;

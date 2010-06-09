@@ -10,8 +10,7 @@ depends=('libxpm' 'libxinerama' 'libxft')
 makedepends=('subversion' 'gcc')
 provides=('dzen2')
 conflicts=('dzen2' 'dzen2-gadgets-svn' 'dzen2-svn')
-source=(text-margin.diff)
-md5sums=('a0e65c3b9eb71a3bddb32a255a946b0c')
+source=(text-margin.diff nested-ca.diff)
 
 _svntrunk=http://dzen.googlecode.com/svn/trunk/
 _svnmod=dzen2
@@ -32,6 +31,7 @@ build() {
   cp -rf $_svnmod $_svnmod-build
   cd $_svnmod-build
 
+  patch -Np0 < ../nested-ca.diff
   patch -Np0 < ../text-margin.diff
 
   make X11INC=/usr/include/X11 X11LIB=/usr/lib/X11 \
@@ -55,3 +55,5 @@ build() {
   cp README* $startdir/pkg/usr/share/doc/$_svnmod
 
 }
+md5sums=('a0e65c3b9eb71a3bddb32a255a946b0c'
+         '3181cc6558730d7250bf5af3e0e48e88')
