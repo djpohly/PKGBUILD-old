@@ -8,7 +8,7 @@ license=('MIT')
 depends=('libx11' 'libxinerama' 'libxft')
 conflicts=('dmenu')
 provides=('dmenu=4.0')
-source=(http://code.suckless.org/dl/tools/dmenu-$pkgver.tar.gz
+source=(http://dl.suckless.org/tools/dmenu-$pkgver.tar.gz
         http://z.ip.fi/~henkka/dmenu-xft/dmenu-4.0-xft.diff
         xftcolor-fix.patch
         ctrl-c.patch
