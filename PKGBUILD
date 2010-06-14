@@ -1,7 +1,7 @@
 # Contributor: system <system at tou dot de>
 pkgname=dzen2-xft-xpm-xinerama-svn
-pkgver=267
-pkgrel=2
+pkgver=271
+pkgrel=1
 pkgdesc="X notification utility with Xinerama, XPM, XFT and gadgets, svn version"
 arch=('i686' 'x86_64')
 url="http://gotmor.googlepages.com/dzen"
@@ -10,7 +10,7 @@ depends=('libxpm' 'libxinerama' 'libxft')
 makedepends=('subversion' 'gcc')
 provides=('dzen2')
 conflicts=('dzen2' 'dzen2-gadgets-svn' 'dzen2-svn')
-source=(text-margin.diff nested-ca.diff)
+source=(text-margin.diff)
 
 _svntrunk=http://dzen.googlecode.com/svn/trunk/
 _svnmod=dzen2
@@ -31,7 +31,6 @@ build() {
   cp -rf $_svnmod $_svnmod-build
   cd $_svnmod-build
 
-  patch -Np0 < ../nested-ca.diff
   patch -Np0 < ../text-margin.diff
 
   make X11INC=/usr/include/X11 X11LIB=/usr/lib/X11 \
@@ -55,5 +54,4 @@ build() {
   cp README* $startdir/pkg/usr/share/doc/$_svnmod
 
 }
-md5sums=('a0e65c3b9eb71a3bddb32a255a946b0c'
-         'adf12c46eea1914b8dec1737aaf54e25')
+md5sums=('a0e65c3b9eb71a3bddb32a255a946b0c')
