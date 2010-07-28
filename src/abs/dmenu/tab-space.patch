@@ -11,8 +11,8 @@ diff -rNU8 dmenu-4.1.1/dmenu.c dmenu-4.1.1.new/dmenu.c
  		strncpy(text, sel->text, sizeof text);
  		cursor = strlen(text);
 +		if (cursor > 0 && cursor < sizeof text - 1) {
-+			text[cursor] = ' ';
-+			text[cursor + 1] = '\0';
++			text[cursor++] = ' ';
++			text[cursor] = '\0';
 +		}
  		match(text);
  		break;

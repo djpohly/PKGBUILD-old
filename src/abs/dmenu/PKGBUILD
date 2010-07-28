@@ -17,7 +17,7 @@ source=("http://dl.suckless.org/tools/dmenu-$pkgver.tar.gz"
         tab-space.patch
         textmargin.patch)
 md5sums=('931896a199741c23be945e8519a81c1d'
-         'b64db75101865e9e7f80bab83241bc32'
+         '409b61f6e6c913cbb356e1ac03ba8a24'
          '2dd9ea4a8055d5be8732154493e1d2e2')
 
 build(){
