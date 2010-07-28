@@ -1,37 +1,37 @@
-pkgname=dmenu-xft
-pkgver=4.0
+# $Id: PKGBUILD 83924 2010-06-23 18:58:07Z andrea $
+# Maintainer:
+# Contributor: Thayer Williams <thayer@archlinux.org>
+# Contributor: Jeff 'codemac' Mickey <jeff@archlinux.org>
+
+pkgname=dmenu-mod
+pkgver=4.1.1
 pkgrel=1
-pkgdesc="Dynamic X menu - with xft support"
+pkgdesc="A generic menu for X"
+url="http://tools.suckless.org/dmenu/"
 arch=('i686' 'x86_64')
-url="http://code.suckless.org/"
 license=('MIT')
-depends=('libx11' 'libxinerama' 'libxft')
+depends=('sh' 'libxinerama')
+provides=('dmenu=4.1.1')
 conflicts=('dmenu')
-provides=('dmenu=4.0')
-source=(http://dl.suckless.org/tools/dmenu-$pkgver.tar.gz
-        http://z.ip.fi/~henkka/dmenu-xft/dmenu-4.0-xft.diff
-        xftcolor-fix.patch
-        ctrl-c.patch
+source=("http://dl.suckless.org/tools/dmenu-$pkgver.tar.gz"
         tab-space.patch
         textmargin.patch)
+md5sums=('931896a199741c23be945e8519a81c1d'
+         'b64db75101865e9e7f80bab83241bc32'
+         '2dd9ea4a8055d5be8732154493e1d2e2')
 
-md5sums=('66e761a653930cc8a21614ba9fedf903'
-         '1f3ecd819a39dea88a3dde9b5271bec6'
-         '1c1648ea38f734591b4e31928bbe6ec1'
-         'db2156be1137153b50b36ee3b08d41ab'
-         '581adbb9af99b770b2c196c3cde25deb'
-         'fde35c75d397ed68c9669f938daeb3e5')
+build(){
+  cd $srcdir/dmenu-$pkgver
 
-build() {
-	cd $srcdir/dmenu-$pkgver
-	patch -p1 < ../tab-space.patch || return 1
-	patch -p1 < ../ctrl-c.patch || return 1
-	patch -p1 < ../dmenu-4.0-xft.diff || return 1
-	patch -p1 < ../xftcolor-fix.patch || return 1
-	patch -p1 < ../textmargin.patch || return 1
-	make || return 1
-	make DESTDIR=$startdir/pkg PREFIX=/usr install || return 1
-    # LICENSE
-	mkdir -p $startdir/pkg/usr/share/licenses/$pkgname || return 1
-	cp LICENSE $startdir/pkg/usr/share/licenses/$pkgname/ || return 1
+  patch -Np1 < ../tab-space.patch || return 1
+  patch -Np1 < ../textmargin.patch || return 1
+  make X11INC=/usr/include/X11 X11LIB=/usr/lib/X11
+}
+
+package() {
+  cd $srcdir/dmenu-$pkgver
+  make PREFIX=/usr DESTDIR=$pkgdir install
+
+  #install license
+  install -m644 -D LICENSE $pkgdir/usr/share/licenses/$pkgname/LICENSE
 }
