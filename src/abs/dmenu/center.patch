@@ -1,0 +1,106 @@
+diff -ur dmenu-4.1.1.orig/dmenu.1 dmenu-4.1.1/dmenu.1
+--- dmenu-4.1.1.orig/dmenu.1	2010-05-29 07:56:51.000000000 -0400
++++ dmenu-4.1.1/dmenu.1	2012-04-04 14:41:04.914073366 -0400
+@@ -5,6 +5,7 @@
+ .B dmenu
+ .RB [ \-i ]
+ .RB [ \-b ]
++.RB [ \-c ]
+ .RB [ \-l " <lines>"]
+ .RB [ \-fn " <font>"]
+ .RB [ \-nb " <color>"]
+@@ -27,6 +28,9 @@
+ .B \-b
+ defines that dmenu appears at the bottom.
+ .TP
++.B \-c
++defines that dmenu appears in the center.
++.TP
+ .B \-l <lines>
+ activates vertical list mode.
+ The given number of lines will be displayed. Window height will get adjusted.
+diff -ur dmenu-4.1.1.orig/dmenu.c dmenu-4.1.1/dmenu.c
+--- dmenu-4.1.1.orig/dmenu.c	2010-05-29 07:56:51.000000000 -0400
++++ dmenu-4.1.1/dmenu.c	2012-04-04 14:38:17.663109395 -0400
+@@ -23,6 +23,7 @@
+ 
+ /* enums */
+ enum { ColFG, ColBG, ColLast };
++enum { TopBar, CenterBar, BottomBar };
+ 
+ /* typedefs */
+ typedef struct {
+@@ -66,7 +67,7 @@
+ static void match(char *pattern);
+ static void readstdin(void);
+ static void run(void);
+-static void setup(Bool topbar);
++static void setup(int barpos);
+ static int textnw(const char *text, unsigned int len);
+ static int textw(const char *text);
+ 
+@@ -672,7 +673,7 @@
+ }
+ 
+ void
+-setup(Bool topbar) {
++setup(int barpos) {
+ 	int i, j, x, y;
+ #if XINERAMA
+ 	int n;
+@@ -719,7 +720,7 @@
+ 						break;
+ 		}
+ 		x = info[i].x_org;
+-		y = topbar ? info[i].y_org : info[i].y_org + info[i].height - mh;
++		y = info[i].y_org + (info[i].height - mh) * barpos / BottomBar;
+ 		mw = info[i].width;
+ 		XFree(info);
+ 	}
+@@ -728,7 +729,7 @@
+ 	{
+ 		XGetWindowAttributes(dpy, parent, &pwa);
+ 		x = 0;
+-		y = topbar ? 0 : pwa.height - mh;
++		y = (pwa.height - mh) * barpos / BottomBar;
+ 		mw = pwa.width;
+ 	}
+ 
+@@ -771,7 +772,7 @@
+ int
+ main(int argc, char *argv[]) {
+ 	unsigned int i;
+-	Bool topbar = True;
++	int barpos = TopBar;
+ 
+ 	/* command line args */
+ 	for(i = 1; i < argc; i++)
+@@ -780,7 +781,9 @@
+ 			fstrstr = cistrstr;
+ 		}
+ 		else if(!strcmp(argv[i], "-b"))
+-			topbar = False;
++			barpos = BottomBar;
++		else if(!strcmp(argv[i], "-c"))
++			barpos = CenterBar;
+ 		else if(!strcmp(argv[i], "-e")) {
+ 			if(++i < argc) parent = atoi(argv[i]);
+ 		}
+@@ -809,7 +812,7 @@
+ 		else if(!strcmp(argv[i], "-v"))
+ 			eprint("dmenu-"VERSION", © 2006-2010 dmenu engineers, see LICENSE for details\n");
+ 		else
+-			eprint("usage: dmenu [-i] [-b] [-e <xid>] [-l <lines>] [-fn <font>] [-nb <color>]\n"
++			eprint("usage: dmenu [-i] [-b] [-c] [-e <xid>] [-l <lines>] [-fn <font>] [-nb <color>]\n"
+ 			       "             [-nf <color>] [-p <prompt>] [-sb <color>] [-sf <color>] [-v]\n");
+ 	if(!setlocale(LC_CTYPE, "") || !XSupportsLocale())
+ 		fprintf(stderr, "warning: no locale support\n");
+@@ -822,7 +825,7 @@
+ 	readstdin();
+ 	running = grabkeyboard();
+ 
+-	setup(topbar);
++	setup(barpos);
+ 	drawmenu();
+ 	XSync(dpy, False);
+ 	run();

@@ -5,7 +5,7 @@
 
 pkgname=dmenu-mod
 pkgver=4.1.1
-pkgrel=1
+pkgrel=2
 pkgdesc="A generic menu for X"
 url="http://tools.suckless.org/dmenu/"
 arch=('i686' 'x86_64')
@@ -15,16 +15,19 @@ provides=('dmenu=4.1.1')
 conflicts=('dmenu')
 source=("http://dl.suckless.org/tools/dmenu-$pkgver.tar.gz"
         tab-space.patch
-        textmargin.patch)
+        textmargin.patch
+	center.patch)
 md5sums=('931896a199741c23be945e8519a81c1d'
          '409b61f6e6c913cbb356e1ac03ba8a24'
-         '2dd9ea4a8055d5be8732154493e1d2e2')
+         '2dd9ea4a8055d5be8732154493e1d2e2'
+         '49d84c5e765677f4cfefb12937cf758b')
 
 build(){
   cd $srcdir/dmenu-$pkgver
 
-  patch -Np1 < ../tab-space.patch || return 1
-  patch -Np1 < ../textmargin.patch || return 1
+  patch -Np1 -i ../tab-space.patch
+  patch -Np1 -i ../textmargin.patch
+  patch -Np1 -i ../center.patch
   make X11INC=/usr/include/X11 X11LIB=/usr/lib/X11
 }
 
