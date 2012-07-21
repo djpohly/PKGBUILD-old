@@ -1,40 +1,54 @@
-# $Id: PKGBUILD 83924 2010-06-23 18:58:07Z andrea $
-# Maintainer:
-# Contributor: Thayer Williams <thayer@archlinux.org>
-# Contributor: Jeff 'codemac' Mickey <jeff@archlinux.org>
-
-pkgname=dmenu-mod
-pkgver=4.1.1
-pkgrel=2
-pkgdesc="A generic menu for X"
+# Maintainer: Devin J. Pohly <djpohly@gmail.com>
+pkgname=dmenu-djp-hg
+pkgver=488.7
+pkgrel=1
+pkgdesc="The latest hg pull of dmenu, with my own patchqueue"
+arch=(i686 x86_64)
 url="http://tools.suckless.org/dmenu/"
-arch=('i686' 'x86_64')
 license=('MIT')
 depends=('sh' 'libxinerama')
-provides=('dmenu=4.1.1')
-conflicts=('dmenu')
-source=("http://dl.suckless.org/tools/dmenu-$pkgver.tar.gz"
-        tab-space.patch
-        textmargin.patch
-	center.patch)
-md5sums=('931896a199741c23be945e8519a81c1d'
-         '409b61f6e6c913cbb356e1ac03ba8a24'
-         '2dd9ea4a8055d5be8732154493e1d2e2'
-         '49d84c5e765677f4cfefb12937cf758b')
+makedepends=('mercurial')
+provides=('dmenu')
 
-build(){
-  cd $srcdir/dmenu-$pkgver
+_hgroot="http://hg.suckless.org"
+_hgrepo="dmenu"
+_hgmq="https://bitbucket.org/djpohly/dmenu-patches"
 
-  patch -Np1 -i ../tab-space.patch
-  patch -Np1 -i ../textmargin.patch
-  patch -Np1 -i ../center.patch
-  make X11INC=/usr/include/X11 X11LIB=/usr/lib/X11
+build() {
+  cd "$srcdir"
+  msg "Connecting to Mercurial server...."
+
+  if [[ -d "$_hgrepo" ]]; then
+    cd "$_hgrepo"
+    hg pull -u
+    hg pull -u --mq
+    msg "The local files are updated."
+  else
+    hg qclone -p "$_hgmq" "$_hgroot" "$_hgrepo"
+  fi
+
+  msg "Mercurial checkout done or server timeout"
+  msg "Starting build..."
+
+  rm -rf "$srcdir/$_hgrepo-build"
+  cp -r "$srcdir/$_hgrepo" "$srcdir/$_hgrepo-build"
+  cd "$srcdir/$_hgrepo-build"
+
+  # Apply patches
+  hg qpush -a
+
+  #
+  # BUILD HERE
+  #
+  make \
+    X11INC=/usr/include/X11 \
+    X11LIB=/usr/lib/X11
 }
 
 package() {
-  cd $srcdir/dmenu-$pkgver
-  make PREFIX=/usr DESTDIR=$pkgdir install
-
-  #install license
-  install -m644 -D LICENSE $pkgdir/usr/share/licenses/$pkgname/LICENSE
+  cd "$srcdir/$_hgrepo-build"
+  make PREFIX=/usr DESTDIR="$pkgdir" install
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }
+
+# vim:set ts=2 sw=2 et:
