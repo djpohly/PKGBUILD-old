@@ -1,6 +1,6 @@
 # Maintainer: Devin J. Pohly <djpohly@gmail.com>
-pkgname=dmenu-djp-hg
-pkgver=488.7
+pkgname=dmenu-djp-git
+pkgver=491.2
 pkgrel=1
 pkgdesc="The latest hg pull of dmenu, with my own patchqueue"
 arch=(i686 x86_64)
@@ -9,44 +9,37 @@ license=('MIT')
 depends=('sh' 'libxinerama')
 makedepends=('mercurial')
 provides=('dmenu')
+conflicts=('dmenu')
+source=("git+https://github.com/djpohly/dmenu")
+_upstream="http://git.suckless.org/dmenu"
+md5sums=(SKIP)
 
-_hgroot="http://hg.suckless.org"
-_hgrepo="dmenu"
-_hgmq="https://bitbucket.org/djpohly/dmenu-patches"
+pkgver() {
+  cd "$srcdir/dmenu"
+
+  git remote add upstream "$_upstream"
+  git fetch upstream
+
+  local upstream=$(git rev-list --count upstream/master)
+  local behind=$(git rev-list --count ..upstream/master)
+  local ahead=$(git rev-list --count upstream/master..)
+
+  [[ $behind -gt 0 ]] && warning "Patched version is %s commits behind upstream" "$behind"
+
+  printf "%s.%s\n" "$upstream" "$ahead"
+}
 
 build() {
-  cd "$srcdir"
-  msg "Connecting to Mercurial server...."
+  cd "$srcdir/dmenu"
 
-  if [[ -d "$_hgrepo" ]]; then
-    cd "$_hgrepo"
-    hg pull -u
-    hg pull -u --mq
-    msg "The local files are updated."
-  else
-    hg qclone -p "$_hgmq" "$_hgroot" "$_hgrepo"
-  fi
-
-  msg "Mercurial checkout done or server timeout"
-  msg "Starting build..."
-
-  rm -rf "$srcdir/$_hgrepo-build"
-  cp -r "$srcdir/$_hgrepo" "$srcdir/$_hgrepo-build"
-  cd "$srcdir/$_hgrepo-build"
-
-  # Apply patches
-  hg qpush -a
-
-  #
-  # BUILD HERE
-  #
   make \
     X11INC=/usr/include/X11 \
     X11LIB=/usr/lib/X11
 }
 
 package() {
-  cd "$srcdir/$_hgrepo-build"
+  cd "$srcdir/dmenu"
+
   make PREFIX=/usr DESTDIR="$pkgdir" install
   install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }
