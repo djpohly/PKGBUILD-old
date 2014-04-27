@@ -15,8 +15,8 @@ source=(text-margin.diff)
 _svntrunk=http://dzen.googlecode.com/svn/trunk/
 _svnmod=dzen2
 
-prepare() {
-  cd "$srcdir"
+build() {
+  cd $startdir/src
 
   if [ -d $_svnmod/.svn ]; then
     (cd $_svnmod && svn up -r $pkgver)
@@ -32,33 +32,26 @@ prepare() {
   cd $_svnmod-build
 
   patch -Np0 < ../text-margin.diff
-}
 
-build() {
-  cd "$srcdir/$_svnmod-build"
   make X11INC=/usr/include/X11 X11LIB=/usr/lib/X11 \
   CFLAGS=" -Wall -Os ${INCS} -DVERSION=\"${VERSION}\" -DDZEN_XINERAMA -DDZEN_XPM -DDZEN_XFT `pkg-config --cflags xft`" \
-  LIBS=" -L/usr/lib -lc -L${X11LIB} -lX11 -lXinerama -lXpm `pkg-config --libs xft`"
-}
-
-package() {
-  cd "$srcdir/$_svnmod-build"
-  make PREFIX=/usr DESTDIR=$pkgdir install
+  LIBS=" -L/usr/lib -lc -L${X11LIB} -lX11 -lXinerama -lXpm `pkg-config --libs xft`" || return 1
+  make PREFIX=/usr DESTDIR=$startdir/pkg install || return 1
 
   #license
-  install -m644 -D LICENSE $pkgdir/usr/share/licenses/$_svnmod/COPYING
+  install -m644 -D LICENSE $startdir/pkg/usr/share/licenses/$_svnmod/COPYING
 
   #docs
-  install -d $pkgdir/usr/share/doc/$_svnmod
-  install -m644 README* $pkgdir/usr/share/doc/$_svnmod
+  mkdir -p $startdir/pkg/usr/share/doc/$_svnmod
+  cp README* $startdir/pkg/usr/share/doc/$_svnmod
 
   #gadgets
   cd gadgets
-  make X11INC=/usr/include/X11 X11LIB=/usr/lib/X11
-  make PREFIX=/usr DESTDIR=$pkgdir install
+  make X11INC=/usr/include/X11 X11LIB=/usr/lib/X11 || return 1
+  make PREFIX=/usr DESTDIR=$startdir/pkg install || return 1
 
   #docs
-  install -m644 README* $pkgdir/usr/share/doc/$_svnmod
+  cp README* $startdir/pkg/usr/share/doc/$_svnmod
 
 }
 md5sums=('a0e65c3b9eb71a3bddb32a255a946b0c')
