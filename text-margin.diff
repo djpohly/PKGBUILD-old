@@ -1,7 +1,7 @@
 Index: dzen.h
 ===================================================================
---- dzen.h	(revision 267)
-+++ dzen.h	(working copy)
+--- a/dzen.h	(revision 267)
++++ b/dzen.h	(working copy)
 @@ -130,6 +130,7 @@
  	const char *bg;
  	const char *fg;
@@ -12,8 +12,8 @@ Index: dzen.h
  	int screen;
 Index: main.c
 ===================================================================
---- main.c	(revision 267)
-+++ main.c	(working copy)
+--- a/main.c	(revision 267)
++++ b/main.c	(working copy)
 @@ -256,7 +256,7 @@
  	}
  
