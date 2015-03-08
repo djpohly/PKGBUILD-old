@@ -1,28 +1,27 @@
 # Maintainer: Devin J. Pohly <djpohly@gmail.com>
 pkgname=dmenu-djp-git
-pkgver=491.2
+pkgver=494.5
 pkgrel=1
-pkgdesc="The latest hg pull of dmenu, with my own patchqueue"
+pkgdesc="The latest git pull of dmenu, with my own patchqueue"
 arch=(i686 x86_64)
 url="http://tools.suckless.org/dmenu/"
 license=('MIT')
 depends=('sh' 'libxinerama')
-makedepends=('mercurial')
+makedepends=('git')
 provides=('dmenu')
 conflicts=('dmenu')
-source=("git+https://github.com/djpohly/dmenu")
+source=("git+https://github.com/djpohly/dmenu#branch=patches")
 _upstream="http://git.suckless.org/dmenu"
 md5sums=(SKIP)
 
 pkgver() {
   cd "$srcdir/dmenu"
 
-  git remote add upstream "$_upstream"
-  git fetch upstream
+  git fetch "$_upstream" master
 
-  local upstream=$(git rev-list --count upstream/master)
-  local behind=$(git rev-list --count ..upstream/master)
-  local ahead=$(git rev-list --count upstream/master..)
+  local upstream=$(git rev-list --count FETCH_HEAD)
+  local behind=$(git rev-list --count ..FETCH_HEAD)
+  local ahead=$(git rev-list --count FETCH_HEAD..)
 
   [[ $behind -gt 0 ]] && warning "Patched version is %s commits behind upstream" "$behind"
 
