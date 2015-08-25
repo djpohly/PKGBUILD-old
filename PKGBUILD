@@ -14,6 +14,7 @@ license=('GPL')
 arch=('i686' 'x86_64')
 depends=('libao' 'ffmpeg' 'libmodplug' 'audiofile' 'libshout' 'libmad' 'curl' 'faad2'
          'sqlite' 'jack' 'libmms' 'wavpack' 'avahi' 'libid3tag' 'yajl' 'libmpdclient'
+         'libgme' 'zziplib'
          'icu' 'libupnp' 'libnfs' 'libsamplerate' 'libsoxr' 'smbclient')
 makedepends=('boost' 'doxygen')
 validpgpkeys=('0392335A78083894A4301C43236E8A58C6DB4512')
@@ -36,7 +37,9 @@ build() {
 		--enable-jack \
 		--enable-soundcloud \
 		--enable-pipe-output \
-		--enable-pulse \
+		--disable-pulse \
+		--enable-libgme \
+		--enable-zzip \
 		--disable-sidplay \
 		--with-systemdsystemunitdir=/usr/lib/systemd/system
 	make
