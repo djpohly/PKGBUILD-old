@@ -40,6 +40,7 @@ build() {
         -D BUILD_XDAMAGE=OFF \
         -D BUILD_XFT=OFF \
 		-D BUILD_WLAN=ON \
+		-D BUILD_MPD=ON \
 		-D CMAKE_INSTALL_PREFIX=/usr \
 		.
 
