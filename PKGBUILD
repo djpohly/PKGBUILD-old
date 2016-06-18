@@ -14,15 +14,19 @@ optdepends=('qt4: Qt 4.x frontend'
             'gtk2: Gtk+ 2.x frontend'
             'gtk3: Gtk+ 3.x frontend'
             'gtkmm: Gtk++ 2.x frontend')
-source=(http://download.drobilla.net/$pkgname-$pkgver.tar.bz2{,.sig})
+source=(http://download.drobilla.net/$pkgname-$pkgver.tar.bz2{,.sig}
+        'port-name.diff')
 md5sums=('8c11c58c4b0e69fb6b21041bcac275f7'
-         'SKIP')
+         'SKIP'
+         '82c9e9f0a088bec604da9470b528447b')
 validpgpkeys=('907D226E7E13FA337F014A083672782A9BF368F3') # David Robillard
 
 prepare() {
   cd $pkgname-$pkgver
   # use moc-qt4
   sed -i 's/moc/&-qt4/;s/${MOC}/moc-qt4/' wscript
+  # Allow setting of port name
+  patch -Np1 -i ../port-name.diff
 }
 
 build() {
