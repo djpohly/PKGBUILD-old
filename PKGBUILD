@@ -6,7 +6,7 @@
 # Contributor: Ben <ben@benmazer.net>
 
 pkgname=mpd
-pkgver=0.19.14
+pkgver=0.19.17
 pkgrel=1
 pkgdesc='Flexible, powerful, server-side application for playing music'
 url='http://www.musicpd.org/'
@@ -15,13 +15,13 @@ arch=('i686' 'x86_64')
 depends=('libao' 'ffmpeg' 'libmodplug' 'audiofile' 'libshout' 'libmad' 'curl' 'faad2'
          'sqlite' 'jack' 'libmms' 'wavpack' 'avahi' 'libid3tag' 'yajl' 'libmpdclient'
          'libgme' 'zziplib'
-         'icu' 'libupnp' 'libnfs' 'libsamplerate' 'libsoxr' 'smbclient')
+         'icu' 'libupnp' 'libnfs' 'libsamplerate' 'libsoxr' 'smbclient' 'libcdio-paranoia')
 makedepends=('boost' 'doxygen')
 validpgpkeys=('0392335A78083894A4301C43236E8A58C6DB4512')
 source=("http://www.musicpd.org/download/${pkgname}/${pkgver%.*}/${pkgname}-${pkgver}.tar.xz"{,.sig}
         'tmpfiles.d'
         'conf')
-sha1sums=('2faf8664ae5c9183e73185c9dcfe0be50579f5e8' 'SKIP'
+sha1sums=('88d98884a262af3be74e2791ae9e5eb898f6dfbb' 'SKIP'
           'f4d5922abb69abb739542d8e93f4dfd748acdad7'
           '291fd5cda9f0845834a553017327c4586bd853f6')
 
@@ -40,6 +40,7 @@ build() {
 	./configure \
 		--prefix=/usr \
 		--sysconfdir=/etc \
+		--enable-cdio-paranoia \
 		--enable-libmpdclient \
 		--enable-jack \
 		--enable-soundcloud \
