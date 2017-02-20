@@ -79,6 +79,9 @@ package_imagemagick() {
 #Cleaning
   rm -f "${pkgdir}"/usr/lib/*.la
 
+  # I won't use this, and it conflicts with execline
+  rm -f "${pkgdir}"/usr/bin/import
+
 # template start; name=perl-binary-module-dependency; version=1;
 if [[ $(find "$pkgdir/usr/lib/perl5/" -name "*.so") ]]; then
 	_perlver_min=$(perl -e '$v = $^V->{version}; print $v->[0].".".($v->[1]);')
