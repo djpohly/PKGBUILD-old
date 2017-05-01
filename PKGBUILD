@@ -6,8 +6,8 @@
 # Contributor: Ben <ben@benmazer.net>
 
 pkgname=mpd
-pkgver=0.20.3
-pkgrel=1
+pkgver=0.20.6
+pkgrel=2
 pkgdesc='Flexible, powerful, server-side application for playing music'
 url='https://www.musicpd.org/'
 license=('GPL')
@@ -23,9 +23,10 @@ validpgpkeys=('0392335A78083894A4301C43236E8A58C6DB4512')
 source=("https://www.musicpd.org/download/${pkgname}/${pkgver%.*}/${pkgname}-${pkgver}.tar.xz"{,.sig}
         'tmpfiles.d'
         'conf')
-sha1sums=('d9f055ce55b431b9b61995714fc758f10d916420' 'SKIP'
-          'f4d5922abb69abb739542d8e93f4dfd748acdad7'
-          '291fd5cda9f0845834a553017327c4586bd853f6')
+sha256sums=('f4055e1189e5cc00e83706b2e0b5ead924ced0303e073d7802ee9f9a8eba4b47'
+            'SKIP'
+            'c1683ba35774c85e16c70e89f7e2ed1c09619512b1a273daabbd5e34d40439bd'
+            'f40f68205834ca53cea3372e930bfe6c2f9ecc9df3b1605df2fec63a658b2e03')
 
 backup=('etc/mpd.conf')
 install=install
