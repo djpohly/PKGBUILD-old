@@ -3,17 +3,17 @@
 
 pkgbase=imagemagick
 pkgname=('imagemagick' 'imagemagick-doc')
-pkgver=6.9.9.0
+pkgver=6.9.9.3
 pkgrel=1
 arch=('i686' 'x86_64')
 url="http://www.imagemagick.org/"
 license=('custom')
 makedepends=('libltdl' 'lcms2' 'libxt' 'fontconfig' 'libxext' 'ghostscript'
-             'openexr' 'libwmf' 'librsvg' 'libxml2' 'liblqr' 'openjpeg2'
+             'openexr' 'libwmf' 'librsvg' 'libxml2' 'liblqr' 'openjpeg2' 'libraw'
              'opencl-headers' 'opencl-icd-loader' 'libwebp' 'subversion' 'glu' 'git')
 source=(http://www.imagemagick.org/download/ImageMagick-${pkgver%.*}-${pkgver##*.}.tar.xz{,.asc}
         perlmagick.rpath.patch)
-sha1sums=('44042e400fe9c8c59ed681dc0a2f77e837babcce'
+sha1sums=('54572dc0ce60f8e46d2224442e51fe6781bb2a32'
           'SKIP'
           'e143cf9d530fabf3b58023899b5cc544ba93daec')
 validpgpkeys=('D8272EF51DA223E4D05B466989AB63D48277377A')
@@ -21,8 +21,8 @@ validpgpkeys=('D8272EF51DA223E4D05B466989AB63D48277377A')
 prepare() {
   cd ImageMagick-${pkgver%.*}-${pkgver##*.}
   sed '/AC_PATH_XTRA/d' -i configure.ac
-  autoreconf --force --install
   patch -p0 -i "${srcdir}/perlmagick.rpath.patch"
+  autoreconf --force --install
 }
 
 build() {
