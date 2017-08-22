@@ -6,8 +6,8 @@
 # Contributor: Ben <ben@benmazer.net>
 
 pkgname=mpd
-pkgver=0.20.8
-pkgrel=1
+pkgver=0.20.9
+pkgrel=3
 pkgdesc='Flexible, powerful, server-side application for playing music'
 url='https://www.musicpd.org/'
 license=('GPL')
@@ -16,14 +16,14 @@ depends=('libao' 'ffmpeg' 'libmodplug' 'audiofile' 'libshout' 'libmad' 'curl' 'f
          'sqlite' 'jack' 'libmms' 'wavpack' 'avahi' 'libid3tag' 'yajl' 'libmpdclient'
          'zziplib'
          'icu' 'libupnp' 'libnfs' 'libsamplerate' 'libsoxr' 'smbclient' 'libcdio-paranoia'
-         'libgme')
+         'libgme' 'zziplib')
 makedepends=('boost' 'doxygen')
 validpgpkeys=('0392335A78083894A4301C43236E8A58C6DB4512')
 #source=("https://www.musicpd.org/download/${pkgname}/${pkgver}/${pkgname}-${pkgver}.tar.xz"{,.sig}
 source=("https://www.musicpd.org/download/${pkgname}/${pkgver%.*}/${pkgname}-${pkgver}.tar.xz"{,.sig}
         'tmpfiles.d'
         'conf')
-sha256sums=('7d177f29663c4a0997413401e52bbf11d2bb472773bbcf9294f839c4b8751e35'
+sha256sums=('cd77a2869e32354b004cc6b34fcb0bee56114caa2d9ed862aaa8071441e34eb7'
             'SKIP'
             'c1683ba35774c85e16c70e89f7e2ed1c09619512b1a273daabbd5e34d40439bd'
             'f40f68205834ca53cea3372e930bfe6c2f9ecc9df3b1605df2fec63a658b2e03')
@@ -37,12 +37,13 @@ build() {
 		--prefix=/usr \
 		--sysconfdir=/etc \
 		--enable-cdio-paranoia \
-		--enable-libmpdclient \
+		--enable-iso9660 \
 		--enable-jack \
-		--enable-soundcloud \
+		--enable-libmpdclient \
 		--enable-pipe-output \
 		--disable-pulse \
 		--enable-libgme \
+		--enable-soundcloud \
 		--enable-zzip \
 		--disable-sidplay \
 		--with-systemduserunitdir=/usr/lib/systemd/user \
