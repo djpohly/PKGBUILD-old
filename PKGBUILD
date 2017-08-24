@@ -3,17 +3,17 @@
 
 pkgbase=imagemagick
 pkgname=('imagemagick' 'imagemagick-doc')
-pkgver=6.9.9.3
-pkgrel=1
+pkgver=6.9.9.9
+pkgrel=3
 arch=('i686' 'x86_64')
 url="http://www.imagemagick.org/"
 license=('custom')
 makedepends=('libltdl' 'lcms2' 'libxt' 'fontconfig' 'libxext' 'ghostscript'
-             'openexr' 'libwmf' 'librsvg' 'libxml2' 'liblqr' 'openjpeg2' 'libraw'
-             'opencl-headers' 'opencl-icd-loader' 'libwebp' 'subversion' 'glu' 'git')
+             'openexr' 'libwmf' 'librsvg' 'libxml2' 'liblqr' 'openjpeg2' 'libraw' 'libraqm'
+             'opencl-headers' 'opencl-icd-loader' 'libwebp' 'subversion' 'glu')
 source=(http://www.imagemagick.org/download/ImageMagick-${pkgver%.*}-${pkgver##*.}.tar.xz{,.asc}
         perlmagick.rpath.patch)
-sha1sums=('54572dc0ce60f8e46d2224442e51fe6781bb2a32'
+sha1sums=('abfc4abaf2f7ce1a454f4779df5593357adaab86'
           'SKIP'
           'e143cf9d530fabf3b58023899b5cc544ba93daec')
 validpgpkeys=('D8272EF51DA223E4D05B466989AB63D48277377A')
@@ -46,7 +46,7 @@ check() {
 
 package_imagemagick() {
   pkgdesc="An image viewing/manipulation program"
-  depends=('libltdl' 'lcms2' 'libxt' 'fontconfig' 'libxext' 'liblqr' 'opencl-icd-loader')
+  depends=('libltdl' 'lcms2' 'libxt' 'fontconfig' 'libxext' 'liblqr' 'libraqm' 'opencl-icd-loader')
   optdepends=('imagemagick-doc: for additional information'
               'ghostscript: for Ghostscript support' 
               'openexr: for OpenEXR support' 
@@ -55,7 +55,8 @@ package_imagemagick() {
               'librsvg: for SVG support' 
               'libxml2: for XML support' 
               'libpng: for PNG support' 
-	      'libwebp: for WEBP support')
+	      'libwebp: for WEBP support'
+              'libraw: for DNG support')
   backup=("etc/ImageMagick-${pkgver%%.*}/coder.xml"
           "etc/ImageMagick-${pkgver%%.*}/colors.xml"
           "etc/ImageMagick-${pkgver%%.*}/delegates.xml"
