@@ -6,12 +6,12 @@
 # Contributor: Ben <ben@benmazer.net>
 
 pkgname=mpd
-pkgver=0.20.10
+pkgver=0.20.12
 pkgrel=1
 pkgdesc='Flexible, powerful, server-side application for playing music'
 url='https://www.musicpd.org/'
 license=('GPL')
-arch=('i686' 'x86_64')
+arch=('x86_64')
 depends=('libao' 'ffmpeg' 'libmodplug' 'audiofile' 'libshout' 'libmad' 'curl' 'faad2'
          'sqlite' 'jack' 'libmms' 'wavpack' 'avahi' 'libid3tag' 'yajl' 'libmpdclient'
          'zziplib'
@@ -23,7 +23,7 @@ validpgpkeys=('0392335A78083894A4301C43236E8A58C6DB4512')
 source=("https://www.musicpd.org/download/${pkgname}/${pkgver%.*}/${pkgname}-${pkgver}.tar.xz"{,.sig}
         'tmpfiles.d'
         'conf')
-sha256sums=('52fbc1125cdba41ba999add2820d45f3ce7cf493006bb04d8f0b2937204d3121'
+sha256sums=('e159ac0608fb85c891bd19375ed7056d5f9ec4ba492b052f24820513e774f709'
             'SKIP'
             'c1683ba35774c85e16c70e89f7e2ed1c09619512b1a273daabbd5e34d40439bd'
             'f40f68205834ca53cea3372e930bfe6c2f9ecc9df3b1605df2fec63a658b2e03')
